@@ -1,12 +1,19 @@
-//
-// Created by ADMIN on 10/3/2024.
-//
-#include "FreeRTOS.h"
-#include "queue.h"
-
 #ifndef FREERTOS_VENTILATION_PROJECT_TLS_COMMON_H
 #define FREERTOS_VENTILATION_PROJECT_TLS_COMMON_H
 
-extern QueueHandle_t setpoint_q;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#endif //FREERTOS_VENTILATION_PROJECT_TLS_COMMON_H
+#include "FreeRTOS.h"
+#include "queue.h"
+
+#include "global_definition.h"
+
+bool run_tls_client_test(const uint8_t *cert, size_t cert_len, const char *server, const char *request, int timeout);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // FREERTOS_VENTILATION_PROJECT_TLS_COMMON_H

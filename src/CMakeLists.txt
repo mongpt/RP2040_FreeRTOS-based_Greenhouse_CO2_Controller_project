@@ -35,10 +35,13 @@ add_executable(${ProjectName}
         display/ssd1306os.h
         display/ssd1306os.cpp
         ipstack/tls_common.h
+        ipstack/tls_common.c
         display/screen_selection.h
         display/screen_selection.cpp
         eeprom.cpp
         eeprom.h
+        global_definition.h
+        global_definition.cpp
 )
 
 target_include_directories(${ProjectName} PRIVATE
