@@ -92,24 +92,6 @@ An embedded system project for automated **CO₂ fertilization control** in gree
 
 ---
 
-## 📂 Project Structure
-
-```
-/src
- ├── main.cpp
- ├── gpio_task.cpp
- ├── display_task.cpp
- ├── modbus_task.cpp
- ├── eeprom_task.cpp
- ├── tls_task.cpp
-/Docs
- ├── Greenhouse CO2_controller_specification.pdf
- ├── Greenhouse CO2 controller Project report - G03.pdf
- ├── Greenhouse CO2 controller User manual - G03.pdf
-```
-
----
-
 ## 📋 Documents
 
 - [📄 System Specification (PDF)](./Docs/Greenhouse%20CO2_controller_specification.pdf)
