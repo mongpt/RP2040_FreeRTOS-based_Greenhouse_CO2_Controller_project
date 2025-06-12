@@ -43,7 +43,6 @@ void eeprom_task(void *param) {
         // check if wifi credentials changed
         EventBits_t bits = xEventGroupWaitBits(wifiEventGroup, WIFI_CHANGE_BIT_EEPROM, pdTRUE, pdFALSE, pdMS_TO_TICKS(20));
         if (bits & WIFI_CHANGE_BIT_EEPROM) {
-            printf("debug strlen(SSID_WIFI) %d\n", strlen(SSID_WIFI));
             //write new data to eeprom
             writeEEPROM(eeprom ,SSID_ADDR, reinterpret_cast<const uint8_t *>(SSID_WIFI), strlen(SSID_WIFI));
             printf("SSID %s written successfully!\n", SSID_WIFI);
@@ -266,7 +265,7 @@ void gpio_task(void *param) {
                     rot_btn_data.screen_type = SELECTION_SCR;
                     setpoint_temp = setpoint;
                     isEditing = false;
-                    xQueueSend(gpio_data_q, &rot_btn_data, portMAX_DELAY);
+                    xQueueSend(gpio_data_q, &rot_btn_data, 0);
                     break;
                 case OK_PRESS:
                     gpio_set_irq_enabled_with_callback(ok_btn, GPIO_IRQ_EDGE_FALL, false, &hw_ISR_CB);
@@ -275,14 +274,14 @@ void gpio_task(void *param) {
                         if (rot_btn_data.screen_type == SELECTION_SCR){
                             if (selection_screen_option == 0){  //info
                                 rot_btn_data.screen_type = INFO_SCR;
-                                xQueueSend(gpio_data_q, &rot_btn_data, portMAX_DELAY);
+                                xQueueSend(gpio_data_q, &rot_btn_data, 0);
                             } else if (selection_screen_option == 1){   //set co2
                                 rot_btn_data.screen_type = SET_CO2_SCR;
                                 setpoint_temp = setpoint;
-                                xQueueSend(gpio_data_q, &rot_btn_data, portMAX_DELAY);
+                                xQueueSend(gpio_data_q, &rot_btn_data, 0);
                             } else if (selection_screen_option == 2){   //config wifi
                                 rot_btn_data.screen_type = WIFI_CONF_SCR;
-                                xQueueSend(gpio_data_q, &rot_btn_data, portMAX_DELAY);
+                                xQueueSend(gpio_data_q, &rot_btn_data, 0);
                             }
                         } else if (rot_btn_data.screen_type == SET_CO2_SCR){
                             setpoint = setpoint_temp;
@@ -312,13 +311,13 @@ void gpio_task(void *param) {
                                     asciiChar = START_ASCII - 1;
                                     wifi_char_pos_X.pos_x = posX;
                                     wifi_char_pos_X.ch = asciiChar;
-                                    xQueueSend(gpio_data_q, &rot_btn_data, portMAX_DELAY);
-                                    xQueueSend(wifiCharPos_q, &wifi_char_pos_X, portMAX_DELAY);
+                                    xQueueSend(gpio_data_q, &rot_btn_data, 0);
+                                    xQueueSend(wifiCharPos_q, &wifi_char_pos_X, 0);
                                 } else {    //short press to save data
                                     printf("saving data...\n");
                                     xEventGroupSetBits(wifiEventGroup, WIFI_CHANGE_BIT_EEPROM);
                                 }
-                            } else {    // isChanging = true
+                            } else {    // isEditing = true
                                 int count = 0;
                                 while (!gpio_get(ok_btn) && ++count < 150){
                                     vTaskDelay(pdMS_TO_TICKS(10));
@@ -335,7 +334,7 @@ void gpio_task(void *param) {
                                     printf("ssid %s\n", SSID_WIFI);
                                     printf("pass %s\n", PASS_WIFI);
                                     //wifi_screen_option = !wifi_screen_option;
-                                    xQueueSend(gpio_data_q, &rot_btn_data, portMAX_DELAY);
+                                    xQueueSend(gpio_data_q, &rot_btn_data, 0);
                                 } else {    //short press to confirm character
                                     char c[2];
                                     sprintf(c, "%c", asciiChar);
@@ -367,13 +366,13 @@ void gpio_task(void *param) {
                                         }
                                         wifi_char_pos_X.pos_x = posX;
                                         wifi_char_pos_X.ch = asciiChar;
-                                        xQueueSend(gpio_data_q, &rot_btn_data, portMAX_DELAY);
-                                        xQueueSend(wifiCharPos_q, &wifi_char_pos_X, portMAX_DELAY);
+                                        xQueueSend(gpio_data_q, &rot_btn_data, 0);
+                                        xQueueSend(wifiCharPos_q, &wifi_char_pos_X, 0);
                                     }
                                     asciiChar = START_ASCII - 1;
                                     wifi_char_pos_X.pos_x = posX;
                                     wifi_char_pos_X.ch = asciiChar;
-                                    xQueueSend(wifiCharPos_q, &wifi_char_pos_X, portMAX_DELAY);
+                                    xQueueSend(wifiCharPos_q, &wifi_char_pos_X, 0);
                                 }
                             }
                         }
@@ -384,38 +383,38 @@ void gpio_task(void *param) {
                 case ROT_CW:
                     if (rot_btn_data.screen_type == SELECTION_SCR){
                         selection_screen_option = (selection_screen_option + 1) % 3;
-                        xQueueSend(gpio_data_q, &rot_btn_data, portMAX_DELAY);
+                        xQueueSend(gpio_data_q, &rot_btn_data, 0);
                     } else if (rot_btn_data.screen_type == SET_CO2_SCR){
                         setpoint_temp = (setpoint_temp < MAX_SETPOINT) ? setpoint_temp + 1 : MAX_SETPOINT;
-                        xQueueSend(gpio_data_q, &rot_btn_data, portMAX_DELAY);
+                        xQueueSend(gpio_data_q, &rot_btn_data, 0);
                     } else if (rot_btn_data.screen_type == WIFI_CONF_SCR){
                         if (!isEditing){
                             wifi_screen_option = !wifi_screen_option;
-                            xQueueSend(gpio_data_q, &rot_btn_data, portMAX_DELAY);
+                            xQueueSend(gpio_data_q, &rot_btn_data, 0);
                         } else {    //change character while editing
                             if (++asciiChar > END_ASCII) asciiChar = START_ASCII;
                             wifi_char_pos_X.pos_x = posX;
                             wifi_char_pos_X.ch = asciiChar;
-                            xQueueSend(wifiCharPos_q, &wifi_char_pos_X, portMAX_DELAY);
+                            xQueueSend(wifiCharPos_q, &wifi_char_pos_X, 0);
                         }
                     }
                     break;
                 case ROT_CCW:
                     if (rot_btn_data.screen_type == SELECTION_SCR){
                         selection_screen_option = (selection_screen_option + 2) % 3;
-                        xQueueSend(gpio_data_q, &rot_btn_data, portMAX_DELAY);
+                        xQueueSend(gpio_data_q, &rot_btn_data, 0);
                     } else if (rot_btn_data.screen_type == SET_CO2_SCR){
                         setpoint_temp = (setpoint_temp > MIN_SETPOINT) ? setpoint_temp - 1 : MIN_SETPOINT;
-                        xQueueSend(gpio_data_q, &rot_btn_data, portMAX_DELAY);
+                        xQueueSend(gpio_data_q, &rot_btn_data, 0);
                     } else if (rot_btn_data.screen_type == WIFI_CONF_SCR){
                         if (!isEditing){
                             wifi_screen_option = !wifi_screen_option;
-                            xQueueSend(gpio_data_q, &rot_btn_data, portMAX_DELAY);
+                            xQueueSend(gpio_data_q, &rot_btn_data, 0);
                         } else {    //change character while editing
                             if (--asciiChar < START_ASCII) asciiChar = END_ASCII;
                             wifi_char_pos_X.pos_x = posX;
                             wifi_char_pos_X.ch = asciiChar;
-                            xQueueSend(wifiCharPos_q, &wifi_char_pos_X, portMAX_DELAY);
+                            xQueueSend(wifiCharPos_q, &wifi_char_pos_X, 0);
                         }
                     }
                     break;
@@ -531,7 +530,7 @@ int main()
     setpoint_q = xQueueCreate(QUEUE_SIZE, sizeof (setpoint));
     wifiCharPos_q = xQueueCreate(QUEUE_SIZE, sizeof(wifi_char_pos_str));
     gpio_data_q = xQueueCreate(QUEUE_SIZE, sizeof(rotBtnData_str));
-    gpio_action_q = xQueueCreate(QUEUE_SIZE, sizeof(gpio_t));
+        gpio_action_q = xQueueCreate(QUEUE_SIZE, sizeof(gpio_t));
     gpio_sem = xSemaphoreCreateBinary();
     wifiEventGroup = xEventGroupCreate();
     co2EventGroup = xEventGroupCreate();
@@ -539,7 +538,7 @@ int main()
     xTaskCreate(eeprom_task, "eeprom task", 2048, nullptr, tskIDLE_PRIORITY + 1, nullptr);
     xTaskCreate(display_task, "SSD1306", 512, nullptr, tskIDLE_PRIORITY + 1, nullptr);
     xTaskCreate(tls_task, "tls task", 6000, nullptr, tskIDLE_PRIORITY + 1, nullptr);
-    xTaskCreate(blink_task, "LED_1", 256, (void *) &lp1, tskIDLE_PRIORITY + 1, nullptr);
+    //xTaskCreate(blink_task, "LED_1", 256, (void *) &lp1, tskIDLE_PRIORITY + 1, nullptr);
     xTaskCreate(modbus_task, "Modbus", 512, nullptr, tskIDLE_PRIORITY + 1, nullptr);
     xTaskCreate(gpio_task, "gpio task", 256, nullptr, tskIDLE_PRIORITY + 1, nullptr);
 

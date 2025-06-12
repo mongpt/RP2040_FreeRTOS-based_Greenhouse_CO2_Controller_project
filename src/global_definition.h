@@ -41,8 +41,7 @@ extern char SSID_WIFI[64];
 extern char PASS_WIFI[64];
 
 #define SEND_INTERVAL 60000  // 1m
-#define RECEIVE_INTERVAL 10000 // 5s
-#define READ_MODBUS_INTERVAL 5000 // 5s
+#define RECEIVE_INTERVAL 10000 // 10s
 
 #define WIFI_CHANGE_BIT_TLS (1 << 0)  // Bit 0 for tls_task
 #define WIFI_CHANGE_BIT_EEPROM (1 << 1)  // Bit 1 for eeprom_task
