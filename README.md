@@ -1,7 +1,13 @@
 
 # 🌿 Greenhouse CO₂ Controller
 
-An embedded system project for automated **CO₂ fertilization control** in greenhouse environments. Developed using Raspberry Pi Pico W, FreeRTOS, industrial sensors, and cloud connectivity via ThingSpeak, the system maintains ideal CO₂ levels to improve plant growth and resource efficiency.
+A prototype CO₂ fertilization controller for greenhouse environments, developed as a school project on the
+              Raspberry Pi Pico W using a FreeRTOS-based embedded software stack. The system integrates Vaisala’s
+              industrial-grade sensors to monitor temperature, humidity, and CO₂ levels, coordinating fan and valve
+              control through modular real-time tasks and robust inter-task communication mechanisms (queues,
+              semaphores, event groups). Data is published to the cloud and visualized via ThingSpeak, allowing for
+              remote monitoring and control. Designed for automation, reliability, and real-world sensor integration,
+              this project demonstrates advanced RTOS design in a cloud-connected greenhouse control system.
 
 > 🏫 Developed by Group 3 (Mong Phan, Sami Barbaglia, Xuan Dang)  
 > 🎓 Metropolia University of Applied Sciences, School of ICT  
